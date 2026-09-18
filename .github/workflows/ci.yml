@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   test:
 
@@ -28,5 +32,15 @@ jobs:
       - name: Run tests
         run: pytest
 
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build Docker image
-        run: docker build -t devops-inventory:latest .
+        run: docker build -t ghcr.io/pidelsitorus/devops-inventory:latest .
+
+      - name: Push Docker image
+        run: docker push ghcr.io/pidelsitorus/devops-inventory:latest
